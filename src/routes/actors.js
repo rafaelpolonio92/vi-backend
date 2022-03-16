@@ -9,7 +9,6 @@ router.get('/list', async (req, res) => {
     const { actors } = await moviesFlow(studioQuery);
     return res.status(200).send(actors);
   } catch (error) {
-    console.log(error);
     return res.status(error.response.status || 500).json({
       success: false,
       error: error.response.data.status_message || 'Unknown error',
@@ -23,7 +22,6 @@ router.get('/list/multiple_roles', async (req, res) => {
     const { actorsWithMultipleChars } = await moviesFlow(studioQuery);
     return res.status(200).send(actorsWithMultipleChars);
   } catch (error) {
-    console.log(error);
     return res.status(error.response.status || 500).json({
       success: false,
       error: error.response.data.status_message || 'Unknown error',

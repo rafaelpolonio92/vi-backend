@@ -76,7 +76,39 @@ const emptyMultipleRoles = [
   },
 ];
 
+const selfRole = [
+  {
+    actor: 'Paul Rudd',
+    character: 'Scott Lang / Ant-Man',
+    title: 'Ant-Man and the Wasp: Quantumania',
+    release_date: '2023-07-26',
+  },
+  {
+    actor: 'Paul Rudd',
+    character: 'Self',
+    title: 'Test',
+    release_date: '2020-07-26',
+  },
+];
+
+const listOfActors = [
+  {
+    actor: 'Evangeline Lilly',
+    character: 'Hope van Dyne / Wasp',
+    title: 'Ant-Man and the Wasp: Quantumania',
+    release_date: '2023-07-26',
+  },
+  {
+    actor: 'Kathryn Newton',
+    character: 'Cassie Lang',
+    title: 'Ant-Man and the Wasp: Quantumania',
+    release_date: '2023-07-26',
+  },
+];
+
 module.exports = {
   multipleRoles,
   emptyMultipleRoles,
+  selfRole,
+  listOfActors,
 };
