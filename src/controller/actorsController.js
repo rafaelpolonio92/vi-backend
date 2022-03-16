@@ -1,4 +1,8 @@
 const axios = require('axios');
+const {
+  actorsParser,
+  actorsWithMultipleCharsParser,
+} = require('../utils/actorsParser');
 
 const apiKey = 'ac505a02032a33d65dd28b41f72182e1';
 
@@ -18,7 +22,7 @@ const listStudioMovies = async (results) => {
   );
   const totalPagesNumber = firstPageResult.data.total_pages;
   studioMoviesList.push(firstPageResult.data.results);
-  for (let i = 1; i <= totalPagesNumber; i++) {
+  for (let i = 2; i <= totalPagesNumber; i++) {
     const {
       data: { results },
     } = await axios.get(
@@ -31,7 +35,6 @@ const listStudioMovies = async (results) => {
 };
 
 const moviesCast = async (movieIds) => {
-  console.log(movieIds);
   const result = await Promise.all(
     movieIds.map(async (id) => {
       const { data } = await axios.get(
@@ -40,15 +43,44 @@ const moviesCast = async (movieIds) => {
       return data;
     })
   );
-  console.log(result);
-  return result;
+  const filteredMovies = result.filter(
+    (movie) =>
+      !movie.title.toLowerCase().includes('making') &&
+      !movie.title.toLowerCase().includes('one-shot')
+  );
+
+  const actorsWithMovies = filteredMovies.flatMap((list) => {
+    const actors = list.credits.cast.filter(
+      (data) => data.known_for_department === 'Acting'
+    );
+    return actors.map((actor) => {
+      return {
+        actor: actor.name,
+        character: actor.character,
+        title: list.original_title,
+        release_date: list.release_date,
+      };
+    });
+  });
+
+  const actors = actorsParser(actorsWithMovies);
+  const actorsWithMultipleChars =
+    actorsWithMultipleCharsParser(actorsWithMovies);
+
+  return {
+    actors,
+    actorsWithMultipleChars,
+  };
 };
 
-const moviesFlow = async () => {
-  const studio = await getStudio('Marvel Studio');
+const moviesFlow = async (studioQuery) => {
+  const studio = await getStudio(studioQuery);
   const studioMoviesIds = await listStudioMovies(studio);
-  const movieActors = await moviesCast(studioMoviesIds);
-  return movieActors;
+  const { actors, actorsWithMultipleChars } = await moviesCast(studioMoviesIds);
+  return {
+    actors,
+    actorsWithMultipleChars,
+  };
 };
 
 module.exports = { moviesFlow };
