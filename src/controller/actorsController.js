@@ -4,7 +4,7 @@ const {
   actorsWithMultipleCharsParser,
 } = require('../utils/actorsParser');
 
-const apiKey = 'ac505a02032a33d65dd28b41f72182e1';
+const apiKey = process.env.API_KEY;
 
 const getStudio = async (studioName) => {
   const studioQueryFormat = studioName.split(' ').join('+');
