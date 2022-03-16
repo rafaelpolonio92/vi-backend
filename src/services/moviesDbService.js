@@ -15,22 +15,26 @@ const getStudio = async (studioName) => {
 };
 
 const listStudioMovies = async (results) => {
-  let studioMoviesList = [];
   const studioId = results[0].id;
   const firstPageResult = await axios.get(
     `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&sort_by=primary_release_date.desc&page=1&with_companies=${studioId}`
   );
   const totalPagesNumber = firstPageResult.data.total_pages;
-  studioMoviesList.push(firstPageResult.data.results);
-  for (let i = 2; i <= totalPagesNumber; i++) {
-    const {
-      data: { results },
-    } = await axios.get(
-      `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&sort_by=primary_release_date.desc&page=${i}&with_companies=${studioId}`
-    );
-    studioMoviesList.push(results);
-  }
-  const moviesIds = studioMoviesList.flat().map((val) => val.id);
+  const totalPagesArray = Array.from(
+    { length: totalPagesNumber },
+    (_, i) => i + 1
+  );
+  const result = await Promise.all(
+    totalPagesArray.map(async (number) => {
+      const {
+        data: { results },
+      } = await axios.get(
+        `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&sort_by=primary_release_date.desc&page=${number}&with_companies=${studioId}`
+      );
+      return results;
+    })
+  );
+  const moviesIds = result.flat().map((val) => val.id);
   return moviesIds;
 };
 
