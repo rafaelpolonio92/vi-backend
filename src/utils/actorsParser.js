@@ -8,9 +8,7 @@ const actorsWithMultipleCharsParser = (list) => {
           t[k]
             .toLowerCase()
             .split(' ')
-            .some((el) => {
-              return v[k].toLowerCase().split(' ').includes(el);
-            })
+            .some((val) => v[k].toLowerCase().split(' ').includes(val))
         )
       ) === i
   );
@@ -30,7 +28,18 @@ const actorsWithMultipleCharsParser = (list) => {
     actorsWithMultipleChars,
     (actorsList) => actorsList.map((list) => _.omit(list, 'actor'))
   );
-  return parsedActorsWithMultipleChars;
+
+  const result = Object.fromEntries(
+    Object.entries(parsedActorsWithMultipleChars).filter(
+      ([, data]) =>
+        new Set(
+          data.filter(
+            ({ character }) => !character.toLowerCase().includes('self')
+          )
+        ).size > 1
+    )
+  );
+  return result;
 };
 
 const actorsParser = (list) => {
