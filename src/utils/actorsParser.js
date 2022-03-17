@@ -42,6 +42,50 @@ const actorsWithMultipleCharsParser = (list) => {
   return result;
 };
 
+const sameActorCharacter = (array, prop) => {
+  let allSame = true;
+  let value;
+  for (const [index, item] of array.entries()) {
+    if (index === 0) {
+      value = item[prop];
+    } else {
+      if (item[prop] !== value) {
+        allSame = false;
+        break;
+      }
+    }
+  }
+  return allSame;
+};
+
+const charsWithDifferentActors = (list) => {
+  const charsWithMultipleActors = _.groupBy(
+    Object.values(
+      list.reduce((c, v) => {
+        let k = v.character;
+        c[k] = c[k] || [];
+        c[k].push(v);
+        return c;
+      }, {})
+    ).reduce((c, v) => (v.length > 1 ? c.concat(v) : c), []),
+    (val) => val.character
+  );
+
+  const parsedCharsWithDifferentActors = _.mapValues(
+    charsWithMultipleActors,
+    (charList) => charList.map((list) => _.omit(list, 'character'))
+  );
+
+  for (const [character, array] of Object.entries(
+    parsedCharsWithDifferentActors
+  )) {
+    if (sameActorCharacter(array, 'actor')) {
+      delete parsedCharsWithDifferentActors[character];
+    }
+  }
+  return parsedCharsWithDifferentActors;
+};
+
 const actorsParser = (list) => {
   const actors = _.mapValues(
     _.groupBy(list, (val) => val.actor),
@@ -53,4 +97,5 @@ const actorsParser = (list) => {
 module.exports = {
   actorsWithMultipleCharsParser,
   actorsParser,
+  charsWithDifferentActors,
 };

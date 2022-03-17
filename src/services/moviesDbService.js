@@ -2,6 +2,7 @@ const axios = require('axios');
 const {
   actorsParser,
   actorsWithMultipleCharsParser,
+  charsWithDifferentActors,
 } = require('../utils/actorsParser');
 
 const apiKey = process.env.API_KEY;
@@ -70,10 +71,12 @@ const moviesCast = async (movieIds) => {
   const actors = actorsParser(actorsWithMovies);
   const actorsWithMultipleChars =
     actorsWithMultipleCharsParser(actorsWithMovies);
+  const charsWithMultipleActors = charsWithDifferentActors(actorsWithMovies);
 
   return {
     actors,
     actorsWithMultipleChars,
+    charsWithMultipleActors,
   };
 };
 
